@@ -28,3 +28,9 @@ func (ctx *Context) With(payload interface{}, key int) Context {
 
 	return Context{context.WithValue(ctx, key, payload)}
 }
+
+//WithFunc WithFunc
+func (ctx *Context) WithFunc(fn interface{}, key int) Context {
+
+	return Context{context.WithValue(ctx, key, fn)}
+}

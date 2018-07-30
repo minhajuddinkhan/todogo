@@ -1,9 +1,11 @@
 version: "2"
 
 services:
-   todogo:
-      volumes:
-        - ".:/app"
-      build: .
+  dbserver:
+      image: postgres:latest
       ports:
-        - "3000:3000"
+        - "5432:5432"
+      environment:
+        - POSTGRES_DB=tododb
+        - POSTGRES_USER=admin
+        - POSTGRES_PASSWORD=admin

@@ -7,4 +7,7 @@ const (
 	DbKey = iota
 	//Authorization Authorization
 	Authorization = "Authorization"
+
+	//ResponseData ResponseData
+	ResponseData = iota
 )

@@ -3,17 +3,19 @@ package middlewares
 import (
 	"net/http"
 
-	context "github.com/minhajuddinkhan/todogo/context"
+	"github.com/minhajuddinkhan/todogo/db"
+
+	"github.com/minhajuddinkhan/todogo/context"
 )
 
-func AppendDatabaseContext(key int, db interface{}) func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+//AppendDatabaseContext AppendDatabaseContext
+func AppendDatabaseContext(key int, database *db.PostgresDB) func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
 	return func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
-		ctx := context.GetContext(r)
-		r.WithContext(ctx.With(db, key))
-
-		next.ServeHTTP(w, r)
+		ctx := context.NewContext(r.Context())
+		ctx = ctx.With(database, key)
+		next.ServeHTTP(w, r.WithContext(ctx))
 
 	}
 }

@@ -1,7 +1,10 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/jinzhu/gorm"
 )
@@ -24,7 +27,14 @@ func (s *Server) Listen(address string, handler http.Handler) {
 		Addr:    address,
 		Handler: handler,
 	}
-	s.httpServer.ListenAndServe()
+
+	logrus.Info(fmt.Sprintf("Server listening on %s", address))
+	err := s.httpServer.ListenAndServe()
+	if err != nil {
+		logrus.Error(fmt.Sprintf("Server crashed on bootstrap: error => %s", err))
+		return
+	}
+
 }
 
 func (s *Server) AppendDatabaseToSvr(db *gorm.DB) {

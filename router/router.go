@@ -39,3 +39,8 @@ func (n *RouterConf) RegisterHandler() {
 
 	n.Negroni.UseHandler(n.Router)
 }
+
+func (n *RouterConf) RegisterHandlerFunc(method string, path string, handler http.HandlerFunc) {
+
+	n.Router.HandleFunc(path, handler).Methods(method)
+}
