@@ -1,0 +1,9 @@
+version: "2"
+
+services:
+   todogo:
+      volumes:
+        - ".:/app"
+      build: .
+      ports:
+        - "3000:3000"
