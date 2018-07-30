@@ -14,16 +14,23 @@ import (
 	"github.com/minhajuddinkhan/todogo/db"
 
 	"github.com/minhajuddinkhan/todogo/models"
+	"github.com/minhajuddinkhan/todogo/store"
 	"github.com/minhajuddinkhan/todogo/utils"
 )
 
 func GetTodos(w http.ResponseWriter, r *http.Request) {
 
 	pg := r.Context().Value(constants.DbKey).(*db.PostgresDB)
-	conn := pg.EstablishConnection()
-	defer conn.Close()
 	var todos []models.Todo
-	conn.Preload("User").Find(&todos)
+	err := store.GetTodos(pg, &todos).Error
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			boom.NotFound(w, "Todos Not Found")
+			return
+		}
+		boom.Internal(w, "Something went wrong")
+		return
+	}
 	utils.Respond(w, todos)
 
 }
@@ -32,15 +39,16 @@ func GetTodoById(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	todoID := vars["id"]
-	pg := r.Context().Value(constants.DbKey).(*db.PostgresDB)
-	conn := pg.EstablishConnection()
-	defer conn.Close()
-
 	var todo models.Todo
-	err := conn.First(&todo, todoID).Error
-	if gorm.IsRecordNotFoundError(err) {
-		boom.NotFound(w, "todo not found")
-		return
+
+	pg := r.Context().Value(constants.DbKey).(*db.PostgresDB)
+	err := store.GetTodoById(pg, &todo, todoID).Error
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			boom.NotFound(w, "todo not found")
+			return
+		}
+		boom.Internal(w, err)
 	}
 
 	utils.Respond(w, todo)

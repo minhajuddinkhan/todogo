@@ -6,6 +6,8 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/minhajuddinkhan/todogo/store"
+
 	"github.com/jinzhu/gorm"
 	"github.com/olekukonko/tablewriter"
 
@@ -47,11 +49,10 @@ func main() {
 		switch c.Args().First() {
 
 		case "todos":
-			conn := todoAppDb.EstablishConnection()
 			todos := []models.Todo{}
-			err = conn.Preload("User").Find(&todos).Error
-			if gorm.IsRecordNotFoundError(err) {
 
+			err = store.GetTodos(todoAppDb, &todos).Error
+			if gorm.IsRecordNotFoundError(err) {
 				fmt.Println("No todos right now")
 			}
 
