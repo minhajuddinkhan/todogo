@@ -9,12 +9,12 @@ import (
 
 	"github.com/joho/godotenv"
 	config "github.com/minhajuddinkhan/todogo/config"
-	constants "github.com/minhajuddinkhan/todogo/constants"
+	"github.com/minhajuddinkhan/todogo/constants"
 	"github.com/minhajuddinkhan/todogo/db"
 	"github.com/minhajuddinkhan/todogo/middlewares"
 	"github.com/minhajuddinkhan/todogo/models"
-	router "github.com/minhajuddinkhan/todogo/router"
-	server "github.com/minhajuddinkhan/todogo/server"
+	"github.com/minhajuddinkhan/todogo/router"
+	"github.com/minhajuddinkhan/todogo/server"
 )
 
 func main() {
@@ -39,12 +39,15 @@ func main() {
 	connectionString := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s"+"",
 		conf.Db.Host, conf.Db.Port, conf.Db.Username, conf.Db.Name, conf.Db.Password)
 
+	fmt.Println(connectionString)
 	//SERVER
 	todoAppSvr := server.NewServer()
 	todoAppDb := db.NewPostgresDB(connectionString, conf.Db.Dialect)
+	conn := todoAppDb.EstablishConnection()
+	todoAppSvr.AppendDatabaseToSvr(conn)
 	m := models.GetAllModels()
 	todoAppDb.Migrate(m)
-	//ROUTER
+	// //ROUTER
 	R := router.CreateRouter()
 	R.Negroni.UseFunc(middlewares.AppendDatabaseContext(constants.DbKey, todoAppSvr.Database))
 	R.Negroni.UseFunc(middlewares.AuthenticateJWT(constants.UserKey, conf.JWTSecret, constants.Authorization))

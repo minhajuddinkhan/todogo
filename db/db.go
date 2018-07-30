@@ -19,8 +19,8 @@ func NewPostgresDB(conn string, dialect string) *PostgresDB {
 	}
 }
 
-//GetConnection GetConnection
-func (pdb *PostgresDB) GetConnection() *gorm.DB {
+//EstablishConnection EstablishConnection
+func (pdb *PostgresDB) EstablishConnection() *gorm.DB {
 	var err error
 	pdb.conn, err = gorm.Open(pdb.dialect, pdb.connStr)
 
@@ -34,7 +34,9 @@ func (pdb *PostgresDB) GetConnection() *gorm.DB {
 func (pdb *PostgresDB) Migrate(models []interface{}) {
 
 	for _, model := range models {
-		pdb.conn.AutoMigrate(model)
+		if !pdb.conn.HasTable(model) {
+			pdb.conn.AutoMigrate(model)
+		}
 
 	}
 }
