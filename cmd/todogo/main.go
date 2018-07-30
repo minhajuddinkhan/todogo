@@ -39,15 +39,14 @@ func main() {
 	connectionString := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s"+"",
 		conf.Db.Host, conf.Db.Port, conf.Db.Username, conf.Db.Name, conf.Db.Password)
 
-	fmt.Println(connectionString)
 	//SERVER
 	todoAppSvr := server.NewServer()
 	todoAppDb := db.NewPostgresDB(connectionString, conf.Db.Dialect)
-	conn := todoAppDb.EstablishConnection()
-	todoAppSvr.AppendDatabaseToSvr(conn)
+	todoAppDb.EstablishConnection()
 	m := models.GetAllModels()
 	todoAppDb.Migrate(m)
-	// //ROUTER
+
+	//ROUTER
 	R := router.CreateRouter()
 	R.Negroni.UseFunc(middlewares.AppendDatabaseContext(constants.DbKey, todoAppSvr.Database))
 	R.Negroni.UseFunc(middlewares.AuthenticateJWT(constants.UserKey, conf.JWTSecret, constants.Authorization))
@@ -57,5 +56,6 @@ func main() {
 	})
 
 	R.RegisterHandler()
+
 	todoAppSvr.Listen(":"+conf.Port, R.Negroni)
 }
