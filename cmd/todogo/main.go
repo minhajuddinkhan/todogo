@@ -2,37 +2,57 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
+	"os"
+
+	"github.com/joho/godotenv"
+	config "github.com/minhajuddinkhan/todogo/config"
+	constants "github.com/minhajuddinkhan/todogo/constants"
+	"github.com/minhajuddinkhan/todogo/db"
 	"github.com/minhajuddinkhan/todogo/middlewares"
+	"github.com/minhajuddinkhan/todogo/models"
 	router "github.com/minhajuddinkhan/todogo/router"
 	server "github.com/minhajuddinkhan/todogo/server"
 )
 
-type TodoAppConfig struct {
-	JwtSecret string
-}
-
-const (
-	UserKey       = iota
-	Authorization = "Authorization"
-)
-
 func main() {
 
-	conf := &TodoAppConfig{
-		JwtSecret: "ILoveGoLang!",
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	conf := &config.Configuration{
+		JWTSecret: os.Getenv("JWTSECRET"),
+		Port:      os.Getenv("SVR_PORT"),
+		Db: config.Db{
+			Dialect:  "postgres",
+			Host:     os.Getenv("DB_HOST"),
+			Port:     os.Getenv("DB_PORT"),
+			Name:     os.Getenv("DB_NAME"),
+			Username: os.Getenv("DB_USER"),
+			Password: os.Getenv("DB_PASSWORD"),
+		},
 	}
 
-	todoAppSvr := server.NewServer()
-	R := router.CreateRouter()
+	connectionString := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s"+"",
+		conf.Db.Host, conf.Db.Port, conf.Db.Username, conf.Db.Name, conf.Db.Password)
 
-	R.Negroni.UseFunc(middlewares.AuthenticateJWT(UserKey, conf.JwtSecret, Authorization))
+	//SERVER
+	todoAppSvr := server.NewServer()
+	todoAppDb := db.NewPostgresDB(connectionString, conf.Db.Dialect)
+	m := models.GetAllModels()
+	todoAppDb.Migrate(m)
+	//ROUTER
+	R := router.CreateRouter()
+	R.Negroni.UseFunc(middlewares.AppendDatabaseContext(constants.DbKey, todoAppSvr.Database))
+	R.Negroni.UseFunc(middlewares.AuthenticateJWT(constants.UserKey, conf.JWTSecret, constants.Authorization))
+
 	R.Router.HandleFunc("/Hello", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "YOLO!")
-
 	})
 
 	R.RegisterHandler()
-	todoAppSvr.Listen(":3000", R.Negroni)
+	todoAppSvr.Listen(":"+conf.Port, R.Negroni)
 }

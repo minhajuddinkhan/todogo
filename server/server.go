@@ -2,11 +2,14 @@ package server
 
 import (
 	"net/http"
+
+	"github.com/jinzhu/gorm"
 )
 
 //Server TodoAppServer
 type Server struct {
 	httpServer *http.Server
+	Database   *gorm.DB
 }
 
 //NewServer Creates a New server
@@ -22,4 +25,9 @@ func (s *Server) Listen(address string, handler http.Handler) {
 		Handler: handler,
 	}
 	s.httpServer.ListenAndServe()
+}
+
+func (s *Server) AppendDatabaseToSvr(db *gorm.DB) {
+	s.Database = db
+
 }

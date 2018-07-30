@@ -23,8 +23,8 @@ func GetContext(r *http.Request) Context {
 	return ctx
 }
 
-//WithUserInfo WithUserInfo
-func (ctx *Context) WithUserInfo(payload interface{}, key int) Context {
+//With With
+func (ctx *Context) With(payload interface{}, key int) Context {
 
 	return Context{context.WithValue(ctx, key, payload)}
 }

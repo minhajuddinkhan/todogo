@@ -34,7 +34,7 @@ func AuthenticateJWT(keyForDecodedDataAccess int, SecretKey string, Header strin
 		}
 
 		ctx := context.GetContext(r)
-		ctx.WithUserInfo(decoded, keyForDecodedDataAccess)
+		ctx.With(decoded, keyForDecodedDataAccess)
 		r.WithContext(ctx)
 
 	}
