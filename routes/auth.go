@@ -46,6 +46,9 @@ func UserLogin(conf *conf.Configuration, store *store.PgStore) http.HandlerFunc 
 				boom.NotFound(w, "user not found")
 				return
 			}
+			boom.BadRequest(w, err.Error())
+			return
+
 		}
 		signer := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 			"name": user.Name,

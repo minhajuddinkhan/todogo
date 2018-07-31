@@ -18,3 +18,16 @@ func (pg *PgStore) GetUser(User *models.User) *gorm.DB {
 	defer conn.Close()
 	return conn.Where(User).First(User)
 }
+
+//GetUserByNameAndPassword GetUserByNameAndPassword
+func (pg *PgStore) GetUserByNameAndPassword(name string, password string, User *models.User) *gorm.DB {
+	conn := pg.EstablishConnection()
+	defer conn.Close()
+	return conn.Where("name = ? AND password = ?", name, password).First(User)
+}
+
+func (pg *PgStore) GetUserByName(name string, User *models.User) *gorm.DB {
+	conn := pg.EstablishConnection()
+	defer conn.Close()
+	return conn.Where("name = ?", name).First(User)
+}

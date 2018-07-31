@@ -4,10 +4,9 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type Todo struct {
+type Session struct {
 	gorm.Model
-	Name    string `gorm:"type:varchar(100)`
-	Priorty int
+	Session string
 	User    User `gorm:"foreignkey:UserID"`
 	UserID  uint
 }

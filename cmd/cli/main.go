@@ -1,11 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"os"
 	"strconv"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/fatih/color"
 	"github.com/minhajuddinkhan/todogo/store"
@@ -51,23 +52,73 @@ func main() {
 
 		switch c.Args().First() {
 
+		case "get":
+
+			windowID := os.Getenv("WINDOWID")
+			session := models.Session{
+				Session: windowID,
+			}
+
+			err := todoAppStore.GetSession(&session).Error
+			if err != nil {
+
+				if gorm.IsRecordNotFoundError(err) {
+					fmt.Println("Please log in first.")
+					return
+				}
+				panic(err)
+
+			}
+
+			todos := []models.Todo{}
+
+			err = todoAppStore.GetTodos(&todos).Error
+			if gorm.IsRecordNotFoundError(err) {
+				logrus.Error("No todos right now")
+			}
+
+			for i := 0; i < len(todos); i++ {
+				table.Append([]string{
+					todos[i].Name,
+					todos[i].User.Name,
+					strconv.Itoa(todos[i].Priorty),
+				})
+			}
+
+			table.Render()
+
+		case "logout":
+			windowID := os.Getenv("WINDOWID")
+			fmt.Println("WINDWO ID", windowID)
+
+			session := models.Session{
+				Session: windowID,
+			}
+			err := todoAppStore.DeleteSession(&session).Error
+			if err != nil {
+				panic(err)
+			}
+			logrus.Info("Logged out.")
 		case "login":
 
-			reader := bufio.NewReader(os.Stdin)
+			type LoginRequest struct {
+				Username string `json:"username"`
+				Password string `json:"password"`
+			}
 			c := color.New(color.FgHiGreen)
 			rc := color.New(color.FgHiRed)
-			c.Println("Enter Name")
-			username, _ := reader.ReadString('\n')
 
-			c.Println("Enter Password")
-			password, _ := reader.ReadString('\n')
+			var username, password string
+			c.Println("Enter Name")
+			fmt.Scan(&username)
+			c.Println("Enter password")
+			fmt.Scan(&password)
 
 			user := models.User{
 				Name:     username,
 				Password: password,
 			}
 			err := todoAppStore.GetUser(&user).Error
-			fmt.Println("HAN", err)
 
 			if err != nil {
 				if gorm.IsRecordNotFoundError(err) {
@@ -75,10 +126,35 @@ func main() {
 					return
 				}
 				rc.Println("Something bad happened\n" + err.Error())
+				return
 			}
 
-			//sessionID := os.Getenv("WINDOWID")
+			windowID := (os.Getenv("WINDOWID"))
+			fmt.Println("WINDWO ID", windowID)
 
+			userSession := models.Session{
+				UserID: user.ID,
+			}
+
+			if todoAppStore.GetSessionByUserID(&userSession).RowsAffected == 0 {
+				err = todoAppStore.SaveSession(&models.Session{
+					Session: windowID,
+					UserID:  user.ID,
+				}).Error
+
+				if err != nil {
+					panic(err)
+				}
+				return
+			}
+			err = todoAppStore.UpdateSession(&models.Session{
+				Session: windowID,
+				UserID:  user.ID,
+			}).Error
+
+			if err != nil {
+				panic(err)
+			}
 		case "todos":
 			todos := []models.Todo{}
 
