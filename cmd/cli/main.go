@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
 	"strconv"
 
+	"github.com/fatih/color"
 	"github.com/minhajuddinkhan/todogo/store"
 
 	"github.com/jinzhu/gorm"
@@ -19,6 +21,7 @@ import (
 
 func main() {
 
+	//	sessions := map[int]bool{}
 	todoCli := cli.NewApp()
 	err := godotenv.Load()
 	if err != nil {
@@ -47,6 +50,16 @@ func main() {
 	todoCli.Action = func(c *cli.Context) {
 
 		switch c.Args().First() {
+
+		case "login":
+
+			reader := bufio.NewReader(os.Stdin)
+			c := color.New(color.FgHiGreen)
+			c.Println("Enter Name")
+
+			text, _ := reader.ReadString('\n')
+			fmt.Println(text)
+			//sessionID := os.Getenv("WINDOWID")
 
 		case "todos":
 			todos := []models.Todo{}

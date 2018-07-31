@@ -10,8 +10,6 @@ import (
 
 	"github.com/minhajuddinkhan/todogo/routes"
 
-	"github.com/sirupsen/logrus"
-
 	"os"
 
 	"github.com/joho/godotenv"
@@ -44,29 +42,20 @@ func main() {
 			Password: os.Getenv("DB_PASSWORD"),
 		},
 	}
-	conf.Db.ConnectionString = fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable"+"",
-		conf.Db.Host, conf.Db.Port, conf.Db.Username, conf.Db.Name, conf.Db.Password)
-
-	todoAppDb := db.NewPostgresDB(conf.Db.ConnectionString, conf.Db.Dialect)
 
 	todoAppStore := store.NewPgStore(conf.Db.ConnectionString)
+	conf.Db.ConnectionString = fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable"+"",
+		conf.Db.Host, conf.Db.Port, conf.Db.Username, conf.Db.Name, conf.Db.Password)
 
 	app.Action = func(c *cli.Context) {
 
 		switch c.Args().First() {
-		case "migrate":
-			conn := todoAppDb.EstablishConnection()
-			defer conn.Close()
+		case "db:initiate":
+
+			todoAppDb := db.NewPostgresDB(conf.Db.ConnectionString, conf.Db.Dialect)
+			todoAppDb.EstablishConnection()
 			m := models.GetAllModels()
-			todoAppDb.Migrate(m)
-			logrus.Info("Database Migrated")
-		case "seed":
-
-			conn := todoAppDb.EstablishConnection()
-			defer conn.Close()
-
-			todoAppDb.SeedDB()
-			logrus.Info("Database Seeded!")
+			todoAppDb.Initialize(m)
 
 		case "serve":
 
