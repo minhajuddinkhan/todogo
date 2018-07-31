@@ -55,10 +55,28 @@ func main() {
 
 			reader := bufio.NewReader(os.Stdin)
 			c := color.New(color.FgHiGreen)
+			rc := color.New(color.FgHiRed)
 			c.Println("Enter Name")
+			username, _ := reader.ReadString('\n')
 
-			text, _ := reader.ReadString('\n')
-			fmt.Println(text)
+			c.Println("Enter Password")
+			password, _ := reader.ReadString('\n')
+
+			user := models.User{
+				Name:     username,
+				Password: password,
+			}
+			err := todoAppStore.GetUser(&user).Error
+			fmt.Println("HAN", err)
+
+			if err != nil {
+				if gorm.IsRecordNotFoundError(err) {
+					rc.Println("Bad credentials")
+					return
+				}
+				rc.Println("Something bad happened\n" + err.Error())
+			}
+
 			//sessionID := os.Getenv("WINDOWID")
 
 		case "todos":

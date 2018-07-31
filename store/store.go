@@ -1,6 +1,8 @@
 package store
 
 import (
+	"fmt"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
@@ -21,6 +23,8 @@ func NewPgStore(connStr string) *PgStore {
 
 //EstablishConnection EstablishConnection
 func (p *PgStore) EstablishConnection() *gorm.DB {
+
+	fmt.Println("p.ConnectionString", p.ConnectionString)
 	pgConn, err := gorm.Open(p.Dialect, p.ConnectionString)
 	if err != nil {
 		panic(err)

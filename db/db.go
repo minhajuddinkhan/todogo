@@ -1,6 +1,8 @@
 package db
 
 import (
+	"fmt"
+
 	gorm "github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/minhajuddinkhan/todogo/models"
@@ -9,7 +11,6 @@ import (
 
 type PostgresDB struct {
 	connStr string
-	Conn    *gorm.DB
 	dialect string
 }
 
@@ -24,20 +25,22 @@ func NewPostgresDB(conn string, dialect string) *PostgresDB {
 //EstablishConnection EstablishConnection
 func (pdb *PostgresDB) EstablishConnection() *gorm.DB {
 	var err error
-	pdb.Conn, err = gorm.Open(pdb.dialect, pdb.connStr)
-	defer pdb.Conn.Close()
+	conn, err := gorm.Open(pdb.dialect, pdb.connStr)
+
 	if err != nil {
 		panic(err)
 	}
-	return pdb.Conn
+	return conn
 }
 
 //Migrate Migrate
 func (pdb *PostgresDB) Migrate(models []interface{}) {
 
+	conn := pdb.EstablishConnection()
+	defer conn.Close()
 	for _, model := range models {
-		if !pdb.Conn.HasTable(model) {
-			pdb.Conn.AutoMigrate(model)
+		if !conn.HasTable(model) {
+			conn.AutoMigrate(model)
 		}
 
 	}
@@ -47,6 +50,7 @@ func (pdb *PostgresDB) Migrate(models []interface{}) {
 
 //Initialize Initialize
 func (pdb *PostgresDB) Initialize(models []interface{}) {
+
 	pdb.Migrate(models)
 	pdb.SeedDB()
 	logrus.Info("Database Seeded!")
@@ -56,17 +60,27 @@ func (pdb *PostgresDB) Initialize(models []interface{}) {
 //SeedAll SeedDB
 func (pdb *PostgresDB) SeedDB() {
 
-	err := pdb.Conn.First(models.User{}, "1").Error
-	if gorm.IsRecordNotFoundError(err) {
-		pdb.Conn.Create(&models.User{
-			Name:     "Rameez",
-			Address:  "Orangi",
-			Password: "123",
-		})
+	conn := pdb.EstablishConnection()
+	defer conn.Close()
+	err := conn.First(&models.User{}, "1").Error
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			conn.Create(&models.User{
+				Name:     "Rameez",
+				Address:  "Orangi",
+				Password: "123",
+			})
+		} else {
+
+			fmt.Println(err.Error())
+
+		}
+
 	}
-	err = pdb.Conn.First(models.Todo{}, "1").Error
+
+	err = conn.Where("id = 1").First(&models.Todo{}).Error
 	if gorm.IsRecordNotFoundError(err) {
-		pdb.Conn.Create(&models.Todo{
+		conn.Create(&models.Todo{
 			Name:    "Eat Food.",
 			Priorty: 1,
 			UserID:  1,

@@ -43,7 +43,6 @@ func main() {
 		},
 	}
 
-	todoAppStore := store.NewPgStore(conf.Db.ConnectionString)
 	conf.Db.ConnectionString = fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable"+"",
 		conf.Db.Host, conf.Db.Port, conf.Db.Username, conf.Db.Name, conf.Db.Password)
 
@@ -53,12 +52,12 @@ func main() {
 		case "db:initiate":
 
 			todoAppDb := db.NewPostgresDB(conf.Db.ConnectionString, conf.Db.Dialect)
-			todoAppDb.EstablishConnection()
 			m := models.GetAllModels()
 			todoAppDb.Initialize(m)
 
 		case "serve":
 
+			todoAppStore := store.NewPgStore(conf.Db.ConnectionString)
 			todoAppSvr := server.NewServer()
 
 			//ROUTER
