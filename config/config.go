@@ -1,5 +1,6 @@
 package config
 
+//Db Db
 type Db struct {
 	Host             string
 	Port             string
@@ -10,6 +11,8 @@ type Db struct {
 	Dialect          string
 	ConnectionString string
 }
+
+//Configuration Configuration
 type Configuration struct {
 	JWTSecret string
 	Port      string

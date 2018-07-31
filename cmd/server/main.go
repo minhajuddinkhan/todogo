@@ -4,6 +4,10 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/minhajuddinkhan/todogo/constants"
+	"github.com/minhajuddinkhan/todogo/middlewares"
+	"github.com/minhajuddinkhan/todogo/store"
+
 	"github.com/minhajuddinkhan/todogo/routes"
 
 	"github.com/sirupsen/logrus"
@@ -12,9 +16,7 @@ import (
 
 	"github.com/joho/godotenv"
 	config "github.com/minhajuddinkhan/todogo/config"
-	"github.com/minhajuddinkhan/todogo/constants"
 	"github.com/minhajuddinkhan/todogo/db"
-	"github.com/minhajuddinkhan/todogo/middlewares"
 	"github.com/minhajuddinkhan/todogo/models"
 	"github.com/minhajuddinkhan/todogo/router"
 	"github.com/minhajuddinkhan/todogo/server"
@@ -47,6 +49,8 @@ func main() {
 
 	todoAppDb := db.NewPostgresDB(conf.Db.ConnectionString, conf.Db.Dialect)
 
+	todoAppStore := store.NewPgStore(conf.Db.ConnectionString)
+
 	app.Action = func(c *cli.Context) {
 
 		switch c.Args().First() {
@@ -58,6 +62,9 @@ func main() {
 			logrus.Info("Database Migrated")
 		case "seed":
 
+			conn := todoAppDb.EstablishConnection()
+			defer conn.Close()
+
 			todoAppDb.SeedDB()
 			logrus.Info("Database Seeded!")
 
@@ -67,11 +74,9 @@ func main() {
 
 			//ROUTER
 			R := router.CreateRouter()
-			R.Negroni.UseFunc(middlewares.AppendDatabaseContext(constants.DbKey, todoAppDb))
+			R.Negroni.UseFunc(middlewares.AuthenticateJWT(constants.UserKey, conf.JWTSecret, constants.Authorization))
 
-			//R.Negroni.UseFunc(middlewares.AuthenticateJWT(constants.UserKey, conf.JWTSecret, constants.Authorization))
-
-			routes.RegisterTodoRoutes(*R)
+			routes.RegisterAllRoutes(*R, conf, todoAppStore)
 			R.RegisterHandler()
 			todoAppSvr.Listen(":"+conf.Port, R.Negroni)
 

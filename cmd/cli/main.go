@@ -13,7 +13,6 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/minhajuddinkhan/todogo/config"
-	"github.com/minhajuddinkhan/todogo/db"
 	"github.com/minhajuddinkhan/todogo/models"
 	"github.com/urfave/cli"
 )
@@ -41,7 +40,8 @@ func main() {
 	conf.Db.ConnectionString = fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable"+"",
 		conf.Db.Host, conf.Db.Port, conf.Db.Username, conf.Db.Name, conf.Db.Password)
 
-	todoAppDb := db.NewPostgresDB(conf.Db.ConnectionString, conf.Db.Dialect)
+	todoAppStore := store.NewPgStore(conf.Db.ConnectionString)
+
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"Todo", "User", "Priority"})
 	todoCli.Action = func(c *cli.Context) {
@@ -51,7 +51,7 @@ func main() {
 		case "todos":
 			todos := []models.Todo{}
 
-			err = store.GetTodos(todoAppDb, &todos).Error
+			err = todoAppStore.GetTodos(&todos).Error
 			if gorm.IsRecordNotFoundError(err) {
 				fmt.Println("No todos right now")
 			}

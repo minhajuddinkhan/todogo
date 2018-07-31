@@ -1,18 +1,24 @@
 package middlewares
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
 	"github.com/darahayes/go-boom"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/minhajuddinkhan/todogo/context"
+	"github.com/minhajuddinkhan/todogo/constants"
 )
 
 //AuthenticateJWT AuthenticateJWT
 func AuthenticateJWT(keyForDecodedDataAccess int, SecretKey string, Header string) func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
 	return func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+
+		if r.URL.Path == "/login" {
+			next.ServeHTTP(w, r)
+			return
+		}
 
 		headers := r.Header.Get(Header)
 		if len(headers) == 0 {
@@ -29,13 +35,14 @@ func AuthenticateJWT(keyForDecodedDataAccess int, SecretKey string, Header strin
 		})
 
 		if err != nil {
-			boom.Internal(w, err)
+			boom.BadRequest(w, err.Error())
 			return
 		}
 
-		ctx := context.GetContext(r)
-		ctx = ctx.With(decoded, keyForDecodedDataAccess)
-		r.WithContext(ctx)
+		fmt.Println("decoded", decoded)
+
+		ctx := context.WithValue(r.Context(), constants.Authorization, decoded)
+		next.ServeHTTP(w, r.WithContext(ctx))
 
 	}
 

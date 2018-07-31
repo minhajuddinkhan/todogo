@@ -24,7 +24,7 @@ func NewPostgresDB(conn string, dialect string) *PostgresDB {
 func (pdb *PostgresDB) EstablishConnection() *gorm.DB {
 	var err error
 	pdb.Conn, err = gorm.Open(pdb.dialect, pdb.connStr)
-
+	defer pdb.Conn.Close()
 	if err != nil {
 		panic(err)
 	}
@@ -46,8 +46,9 @@ func (pdb *PostgresDB) Migrate(models []interface{}) {
 func (pdb *PostgresDB) SeedDB() {
 
 	pdb.Conn.Create(&models.User{
-		Name:    "Rameez",
-		Address: "Orangi",
+		Name:     "Rameez",
+		Address:  "Orangi",
+		Password: "123",
 	})
 	pdb.Conn.Create(&models.Todo{
 		Name:    "Eat Food.",
