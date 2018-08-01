@@ -19,7 +19,7 @@ func Todos(store store.Store) *cli.Command {
 
 	return &cli.Command{
 		Name:    "todos",
-		Aliases: []string{"gotodo todo"},
+		Aliases: []string{"todogo todos"},
 		Usage:   "Handles Your todos",
 		Action: func(c *cli.Context) error {
 			color.New(color.FgCyan).Println("What do you wanna do with todos man?")
@@ -37,7 +37,7 @@ func getTodos(store store.Store) *cli.Command {
 
 	return &cli.Command{
 		Name:    "get",
-		Aliases: []string{"gotodo todo get"},
+		Aliases: []string{"todogo todos get"},
 		Usage:   "Fetches All Your todos",
 		Action: func(c *cli.Context) error {
 			table := tablewriter.NewWriter(os.Stdout)
@@ -50,12 +50,12 @@ func getTodos(store store.Store) *cli.Command {
 
 			err := store.GetSession(&session).Error
 			if err != nil {
-
 				if gorm.IsRecordNotFoundError(err) {
 					fmt.Println("Please log in first.")
 					return nil
 				}
-				panic(err)
+				logrus.Error(err.Error())
+				return err
 
 			}
 

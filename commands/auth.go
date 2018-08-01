@@ -18,7 +18,7 @@ func Login(store store.Store) *cli.Command {
 
 	return &cli.Command{
 		Name:    "login",
-		Aliases: []string{"gotodo login"},
+		Aliases: []string{"todogo login"},
 		Usage:   "Starts session from your command line",
 		Action: func(cli *cli.Context) error {
 
@@ -40,7 +40,7 @@ func Login(store store.Store) *cli.Command {
 			if err != nil {
 				if gorm.IsRecordNotFoundError(err) {
 					rc.Println("Bad credentials")
-					return err
+					return nil
 				}
 				rc.Println("Something bad happened\n" + err.Error())
 				return err
@@ -59,7 +59,7 @@ func Login(store store.Store) *cli.Command {
 				}).Error
 
 				if err != nil {
-					panic(err)
+					rc.Println("Something bad happened\n" + err.Error())
 				}
 				return err
 			}
@@ -69,9 +69,9 @@ func Login(store store.Store) *cli.Command {
 			}).Error
 
 			if err != nil {
-				panic(err)
+				rc.Println("Something bad happened\n" + err.Error())
 			}
-
+			c.Println("Login successfull!")
 			return nil
 		},
 	}
@@ -81,7 +81,7 @@ func Login(store store.Store) *cli.Command {
 func Logout(store store.Store) *cli.Command {
 	return &cli.Command{
 		Name:    "logout",
-		Aliases: []string{"gotodo logout"},
+		Aliases: []string{"todogo logout"},
 		Usage:   "Ends session from your command line",
 		Action: func(c *cli.Context) error {
 			windowID := os.Getenv("WINDOWID")

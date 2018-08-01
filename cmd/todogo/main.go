@@ -1,9 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
+
+	"github.com/minhajuddinkhan/todogo/store"
 
 	"github.com/minhajuddinkhan/todogo/commands"
 	"github.com/minhajuddinkhan/todogo/db"
@@ -16,11 +17,13 @@ import (
 	"github.com/minhajuddinkhan/todogo/router"
 	"github.com/minhajuddinkhan/todogo/routes"
 	"github.com/minhajuddinkhan/todogo/server"
+	"github.com/minhajuddinkhan/todogo/sqlitestore"
 	"github.com/urfave/cli"
 )
 
 func main() {
 	todoApp := cli.NewApp()
+	todoApp.Name = "TODOGO - just a dummy todo application. nothing fancy"
 
 	conf := &config.Configuration{
 		JWTSecret: os.Getenv("JWTSECRET"),
@@ -37,18 +40,18 @@ func main() {
 	}
 
 	var todoAppDb db.Database
+	var todoAppStore store.Store
 
-	fmt.Println(conf.Db.Dialect)
 	if conf.Db.Dialect == "postgres" {
 		todoAppDb = db.NewPostgresDB(conf)
+		todoAppStore = pgstore.NewPgStore(todoAppDb)
 
 	} else {
 		conf.Db.Dialect = "sqlite"
 		conf.Db.VolumePath = "/tmp/todo.db"
 		todoAppDb = db.NewSqliteDB(conf)
+		todoAppStore = sqlitestore.NewSqliteStore(todoAppDb)
 	}
-
-	todoAppStore := pgstore.NewPgStore(todoAppDb)
 
 	todoApp.Commands = []cli.Command{
 		*commands.Todos(todoAppStore),
@@ -56,7 +59,7 @@ func main() {
 		*commands.Logout(todoAppStore),
 		{
 			Name:    "serve",
-			Aliases: []string{"gotodo serve"},
+			Aliases: []string{"todogo serve"},
 			Usage:   "Starts serve from your command line",
 			Action: func(cli *cli.Context) error {
 				todoAppSvr := server.NewServer()
@@ -73,7 +76,7 @@ func main() {
 		},
 		{
 			Name:    "db",
-			Aliases: []string{"gotodo db"},
+			Aliases: []string{"todogo db"},
 			Usage:   "Initiates DB from your command line",
 			Action: func(cli *cli.Context) error {
 				m := models.GetAllModels()
