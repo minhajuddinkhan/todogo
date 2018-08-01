@@ -1,0 +1,14 @@
+# todogo
+
+
+# env
+
+JWTSECRET=ILOVEPAKISTAN
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=tododb
+DB_USER=admin
+DB_PASSWORD=admin
+SVR_PORT=3000
+DB_VOULME_PATH=/tmp/todo.db
+DB_DIALECT=sqlite
