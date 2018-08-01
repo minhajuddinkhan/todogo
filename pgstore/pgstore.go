@@ -3,15 +3,16 @@ package pgstore
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/minhajuddinkhan/todogo/db"
+	"github.com/minhajuddinkhan/todogo/store"
 )
 
 type PgStore struct {
-	DB *db.PostgresDB
+	DB db.Database
 }
 
-func NewPgStore(db *db.PostgresDB) *PgStore {
+func NewPgStore(database db.Database) store.Store {
 	return &PgStore{
-		DB: db,
+		DB: database,
 	}
 
 }

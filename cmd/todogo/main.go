@@ -1,18 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/minhajuddinkhan/todogo/cmd/todogo/commands"
+	"github.com/minhajuddinkhan/todogo/db"
 
 	"github.com/joho/godotenv"
 
 	"github.com/minhajuddinkhan/todogo/cmd/todogo/routes"
 	"github.com/minhajuddinkhan/todogo/config"
 	"github.com/minhajuddinkhan/todogo/constants"
-	"github.com/minhajuddinkhan/todogo/db"
 	"github.com/minhajuddinkhan/todogo/middlewares"
 	"github.com/minhajuddinkhan/todogo/models"
 	"github.com/minhajuddinkhan/todogo/pgstore"
@@ -41,9 +40,7 @@ func main() {
 		},
 	}
 
-	conf.Db.ConnectionString = fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable"+"",
-		conf.Db.Host, conf.Db.Port, conf.Db.Username, conf.Db.Name, conf.Db.Password)
-	todoAppDb := db.NewPostgresDB(conf.Db.ConnectionString)
+	todoAppDb := db.NewPostgresDB(conf)
 	todoAppStore := pgstore.NewPgStore(todoAppDb)
 
 	todoApp.Commands = []cli.Command{
