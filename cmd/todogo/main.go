@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/minhajuddinkhan/todogo/cmd/todogo/commands"
 	"github.com/minhajuddinkhan/todogo/db"
@@ -31,7 +34,7 @@ func main() {
 		JWTSecret: os.Getenv("JWTSECRET"),
 		Port:      os.Getenv("SVR_PORT"),
 		Db: config.Db{
-			Dialect:    "postgres",
+			Dialect:    os.Getenv("DB_DIALECT"),
 			Host:       os.Getenv("DB_HOST"),
 			Port:       os.Getenv("DB_PORT"),
 			Name:       os.Getenv("DB_NAME"),
@@ -41,7 +44,20 @@ func main() {
 		},
 	}
 
-	todoAppDb := db.NewSqliteDB(conf)
+	var todoAppDb db.Database
+
+	fmt.Println(conf.Db.Dialect)
+	if conf.Db.Dialect == "postgres" {
+		todoAppDb = db.NewPostgresDB(conf)
+
+	} else if conf.Db.Dialect == "sqlite" {
+		todoAppDb = db.NewSqliteDB(conf)
+
+	} else {
+		logrus.Error("Invalid Dialect" + conf.Db.Dialect)
+		return
+	}
+
 	todoAppStore := pgstore.NewPgStore(todoAppDb)
 
 	todoApp.Commands = []cli.Command{
