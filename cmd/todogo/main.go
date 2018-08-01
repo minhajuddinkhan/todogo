@@ -5,12 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/sirupsen/logrus"
-
 	"github.com/minhajuddinkhan/todogo/commands"
 	"github.com/minhajuddinkhan/todogo/db"
-
-	"github.com/joho/godotenv"
 
 	"github.com/minhajuddinkhan/todogo/config"
 	"github.com/minhajuddinkhan/todogo/constants"
@@ -25,10 +21,6 @@ import (
 
 func main() {
 	todoApp := cli.NewApp()
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	conf := &config.Configuration{
 		JWTSecret: os.Getenv("JWTSECRET"),
@@ -50,12 +42,10 @@ func main() {
 	if conf.Db.Dialect == "postgres" {
 		todoAppDb = db.NewPostgresDB(conf)
 
-	} else if conf.Db.Dialect == "sqlite" {
-		todoAppDb = db.NewSqliteDB(conf)
-
 	} else {
-		logrus.Error("Invalid Dialect" + conf.Db.Dialect)
-		return
+		conf.Db.Dialect = "sqlite"
+		conf.Db.VolumePath = "/tmp/todo.db"
+		todoAppDb = db.NewSqliteDB(conf)
 	}
 
 	todoAppStore := pgstore.NewPgStore(todoAppDb)
@@ -93,7 +83,7 @@ func main() {
 		},
 	}
 
-	err = todoApp.Run(os.Args)
+	err := todoApp.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
 	}
