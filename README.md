@@ -1,8 +1,15 @@
 # Basic Golang Bootstrapper Project
 
 ### Go getter
-  `github.com/minhajuddinkhan/todogo/cmd/todogo`
- 
+  `go get github.com/minhajuddinkhan/todogo/cmd/todogo`
+
+### Usage
+```
+
+
+### Initialize Database
+  `todogo db`
+  
 ### Credentials to get todos and stuff (that are seeded lol)
 ```go
 username: Rameez
