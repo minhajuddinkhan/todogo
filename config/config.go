@@ -10,6 +10,7 @@ type Db struct {
 	Password         string
 	Dialect          string
 	ConnectionString string
+	VolumePath       string //For local memory dbs
 }
 
 //Configuration Configuration

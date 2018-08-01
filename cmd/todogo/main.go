@@ -31,16 +31,17 @@ func main() {
 		JWTSecret: os.Getenv("JWTSECRET"),
 		Port:      os.Getenv("SVR_PORT"),
 		Db: config.Db{
-			Dialect:  "postgres",
-			Host:     os.Getenv("DB_HOST"),
-			Port:     os.Getenv("DB_PORT"),
-			Name:     os.Getenv("DB_NAME"),
-			Username: os.Getenv("DB_USER"),
-			Password: os.Getenv("DB_PASSWORD"),
+			Dialect:    "postgres",
+			Host:       os.Getenv("DB_HOST"),
+			Port:       os.Getenv("DB_PORT"),
+			Name:       os.Getenv("DB_NAME"),
+			Username:   os.Getenv("DB_USER"),
+			Password:   os.Getenv("DB_PASSWORD"),
+			VolumePath: os.Getenv("DB_VOULME_PATH"),
 		},
 	}
 
-	todoAppDb := db.NewPostgresDB(conf)
+	todoAppDb := db.NewSqliteDB(conf)
 	todoAppStore := pgstore.NewPgStore(todoAppDb)
 
 	todoApp.Commands = []cli.Command{
