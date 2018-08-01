@@ -3,18 +3,16 @@ package store
 import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/minhajuddinkhan/todogo/db"
 )
 
 type PgStore struct {
-	Dialect          string
-	ConnectionString string
-	Connetion        *gorm.DB
+	DB *db.PostgresDB
 }
 
-func NewPgStore(connStr string) *PgStore {
+func NewPgStore(db *db.PostgresDB) *PgStore {
 	return &PgStore{
-		Dialect:          "postgres",
-		ConnectionString: connStr,
+		DB: db,
 	}
 
 }
@@ -22,11 +20,8 @@ func NewPgStore(connStr string) *PgStore {
 //EstablishConnection EstablishConnection
 func (p *PgStore) EstablishConnection() *gorm.DB {
 
-	pgConn, err := gorm.Open(p.Dialect, p.ConnectionString)
-	if err != nil {
-		panic(err)
-	}
-	pgConn.LogMode(true)
+	pgConn := p.DB.EstablishConnection()
+	//	pgConn.LogMode(true)
 	return pgConn
 
 }

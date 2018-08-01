@@ -7,7 +7,6 @@ import (
 
 	"github.com/darahayes/go-boom"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/minhajuddinkhan/todogo/constants"
 )
 
 //AuthenticateJWT AuthenticateJWT
@@ -41,7 +40,7 @@ func AuthenticateJWT(keyForDecodedDataAccess int, SecretKey string, Header strin
 
 		fmt.Println("decoded", decoded)
 
-		ctx := context.WithValue(r.Context(), constants.Authorization, decoded)
+		ctx := context.WithValue(r.Context(), Header, decoded)
 		next.ServeHTTP(w, r.WithContext(ctx))
 
 	}

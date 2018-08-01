@@ -10,23 +10,21 @@ import (
 )
 
 type PostgresDB struct {
-	connStr string
-	dialect string
+	ConnectionStr string
+	dialect       string
 }
 
 //NewPostgresDB NewPostgresDB
-func NewPostgresDB(conn string, dialect string) *PostgresDB {
+func NewPostgresDB(conn string) *PostgresDB {
 	return &PostgresDB{
-		connStr: conn,
-		dialect: dialect,
+		ConnectionStr: conn,
+		dialect:       "postgres",
 	}
 }
 
 //EstablishConnection EstablishConnection
 func (pdb *PostgresDB) EstablishConnection() *gorm.DB {
-	var err error
-	conn, err := gorm.Open(pdb.dialect, pdb.connStr)
-
+	conn, err := gorm.Open(pdb.dialect, pdb.ConnectionStr)
 	if err != nil {
 		panic(err)
 	}
@@ -57,7 +55,7 @@ func (pdb *PostgresDB) Initialize(models []interface{}) {
 
 }
 
-//SeedAll SeedDB
+//SeedDB SeedDB
 func (pdb *PostgresDB) SeedDB() {
 
 	conn := pdb.EstablishConnection()
