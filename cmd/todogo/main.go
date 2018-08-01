@@ -7,18 +7,18 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/minhajuddinkhan/todogo/cmd/todogo/commands"
+	"github.com/minhajuddinkhan/todogo/commands"
 	"github.com/minhajuddinkhan/todogo/db"
 
 	"github.com/joho/godotenv"
 
-	"github.com/minhajuddinkhan/todogo/cmd/todogo/routes"
 	"github.com/minhajuddinkhan/todogo/config"
 	"github.com/minhajuddinkhan/todogo/constants"
 	"github.com/minhajuddinkhan/todogo/middlewares"
 	"github.com/minhajuddinkhan/todogo/models"
 	"github.com/minhajuddinkhan/todogo/pgstore"
 	"github.com/minhajuddinkhan/todogo/router"
+	"github.com/minhajuddinkhan/todogo/routes"
 	"github.com/minhajuddinkhan/todogo/server"
 	"github.com/urfave/cli"
 )
