@@ -26,7 +26,7 @@ type Authorization struct {
 }
 
 //UserLogin UserLogin
-func UserLogin(conf *conf.Configuration, store *store.PgStore) http.HandlerFunc {
+func UserLogin(conf *conf.Configuration, store store.Store) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -36,11 +36,12 @@ func UserLogin(conf *conf.Configuration, store *store.PgStore) http.HandlerFunc 
 			boom.BadRequest(w, "Unable to parse json body.")
 		}
 
-		user := &models.User{
+		user := models.User{
 			Name:     requestPayload.Username,
 			Password: requestPayload.Password,
 		}
-		err = store.GetUser(user).Error
+
+		err = store.GetUser(&user).Error
 		if err != nil {
 			if gorm.IsRecordNotFoundError(err) {
 				boom.NotFound(w, "user not found")
@@ -70,6 +71,6 @@ func UserLogin(conf *conf.Configuration, store *store.PgStore) http.HandlerFunc 
 }
 
 //RegisterAuthRoutes RegisterAuthRoutes
-func RegisterAuthRoutes(R router.RouterConf, conf *conf.Configuration, store *store.PgStore) {
+func RegisterAuthRoutes(R router.RouterConf, conf *conf.Configuration, store store.Store) {
 	R.RegisterHandlerFunc("POST", "/login", UserLogin(conf, store))
 }

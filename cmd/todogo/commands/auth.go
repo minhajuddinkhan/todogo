@@ -14,7 +14,7 @@ import (
 )
 
 //Login Login
-func Login(store *store.PgStore) *cli.Command {
+func Login(store store.Store) *cli.Command {
 
 	return &cli.Command{
 		Name:    "login",
@@ -78,7 +78,7 @@ func Login(store *store.PgStore) *cli.Command {
 }
 
 //Logout Logout
-func Logout(store *store.PgStore) *cli.Command {
+func Logout(store store.Store) *cli.Command {
 	return &cli.Command{
 		Name:    "logout",
 		Aliases: []string{"gotodo logout"},

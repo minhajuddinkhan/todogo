@@ -7,7 +7,7 @@ import (
 )
 
 //RegisterAllRoutes RegisterAllRoutes
-func RegisterAllRoutes(r router.RouterConf, c *conf.Configuration, store *store.PgStore) {
+func RegisterAllRoutes(r router.RouterConf, c *conf.Configuration, store store.Store) {
 
 	RegisterTodoRoutes(r, c, store)
 	RegisterAuthRoutes(r, c, store)

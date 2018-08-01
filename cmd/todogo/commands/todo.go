@@ -15,7 +15,7 @@ import (
 )
 
 //Todos Todos
-func Todos(store *store.PgStore) *cli.Command {
+func Todos(store store.Store) *cli.Command {
 
 	return &cli.Command{
 		Name:    "todos",
@@ -33,7 +33,7 @@ func Todos(store *store.PgStore) *cli.Command {
 
 }
 
-func getTodos(store *store.PgStore) *cli.Command {
+func getTodos(store store.Store) *cli.Command {
 
 	return &cli.Command{
 		Name:    "get",

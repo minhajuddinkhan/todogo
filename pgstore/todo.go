@@ -1,4 +1,4 @@
-package store
+package pgstore
 
 import (
 	"github.com/jinzhu/gorm"

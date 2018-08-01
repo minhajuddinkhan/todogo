@@ -15,9 +15,9 @@ import (
 	"github.com/minhajuddinkhan/todogo/db"
 	"github.com/minhajuddinkhan/todogo/middlewares"
 	"github.com/minhajuddinkhan/todogo/models"
+	"github.com/minhajuddinkhan/todogo/pgstore"
 	"github.com/minhajuddinkhan/todogo/router"
 	"github.com/minhajuddinkhan/todogo/server"
-	"github.com/minhajuddinkhan/todogo/store"
 	"github.com/urfave/cli"
 )
 
@@ -44,7 +44,7 @@ func main() {
 	conf.Db.ConnectionString = fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=disable"+"",
 		conf.Db.Host, conf.Db.Port, conf.Db.Username, conf.Db.Name, conf.Db.Password)
 	todoAppDb := db.NewPostgresDB(conf.Db.ConnectionString)
-	todoAppStore := store.NewPgStore(todoAppDb)
+	todoAppStore := pgstore.NewPgStore(todoAppDb)
 
 	todoApp.Commands = []cli.Command{
 		*commands.Todos(todoAppStore),

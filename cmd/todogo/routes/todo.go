@@ -17,7 +17,7 @@ import (
 )
 
 //GetTodos GetTodos
-func GetTodos(c *conf.Configuration, store *store.PgStore) http.HandlerFunc {
+func GetTodos(c *conf.Configuration, store store.Store) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -38,7 +38,7 @@ func GetTodos(c *conf.Configuration, store *store.PgStore) http.HandlerFunc {
 }
 
 //GetTodoByID GetTodoByID
-func GetTodoByID(c *conf.Configuration, store *store.PgStore) http.HandlerFunc {
+func GetTodoByID(c *conf.Configuration, store store.Store) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -61,7 +61,7 @@ func GetTodoByID(c *conf.Configuration, store *store.PgStore) http.HandlerFunc {
 }
 
 //RegisterTodoRoutes RegisterTodoRoutes
-func RegisterTodoRoutes(r router.RouterConf, c *conf.Configuration, store *store.PgStore) {
+func RegisterTodoRoutes(r router.RouterConf, c *conf.Configuration, store store.Store) {
 
 	r.RegisterHandlerFunc("GET", "/todos", GetTodos(c, store))
 	r.RegisterHandlerFunc("GET", "/todos/{id}", GetTodoByID(c, store))
