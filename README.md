@@ -1,7 +1,7 @@
 # Basic Golang Bootstrapper Project
 
 ### Go getter
-  `go get github.com/minhajuddinkhan/todogo/cmd/todogo`
+  `$ go get github.com/minhajuddinkhan/todogo/cmd/todogo`
 
 ### Usage
 ```
@@ -32,14 +32,14 @@ GLOBAL OPTIONS:
 
 Migrates and seed the database
 
-`todogo db` 
+`$ todogo db` 
 
 
 ### Either spin up a server, or just use the cli
 
 ###### Server
 
-``` todogo serve ```
+```$ todogo serve ```
 
 ###### CLI
 
