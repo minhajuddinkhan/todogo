@@ -2,9 +2,7 @@ package routes
 
 import (
 	"net/http"
-	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
 
 	conf "github.com/minhajuddinkhan/todogo/config"
@@ -12,15 +10,18 @@ import (
 	"github.com/minhajuddinkhan/todogo/store"
 
 	"github.com/darahayes/go-boom"
+	"github.com/minhajuddinkhan/todogo/jsonwebtoken"
 	router "github.com/minhajuddinkhan/todogo/router"
 	"github.com/minhajuddinkhan/todogo/utils"
 )
 
+//LoginRequest LoginRequest
 type LoginRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
+//Authorization Authorization
 type Authorization struct {
 	Authorization string
 }
@@ -51,11 +52,8 @@ func UserLogin(conf *conf.Configuration, store store.Store) http.HandlerFunc {
 			return
 
 		}
-		signer := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-			"name": user.Name,
-			"exp":  time.Now().Add(time.Minute * 20).Unix(),
-		})
-		token, err := signer.SignedString([]byte(conf.JWTSecret))
+		token, err := jsonwebtoken.EncodeJWT(user.Name, conf.JWTSecret)
+
 		if err != nil {
 			boom.BadImplementation(w, "Could not sign JWT token")
 		}

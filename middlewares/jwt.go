@@ -2,11 +2,10 @@ package middlewares
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/darahayes/go-boom"
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/minhajuddinkhan/todogo/jsonwebtoken"
 )
 
 //AuthenticateJWT AuthenticateJWT
@@ -25,20 +24,11 @@ func AuthenticateJWT(keyForDecodedDataAccess int, SecretKey string, Header strin
 			return
 		}
 
-		decoded, err := jwt.Parse(headers, func(token *jwt.Token) (interface{}, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-			}
-			// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
-			return []byte(SecretKey), nil
-		})
-
+		decoded, err := jwt.DecodeJWT(Header, SecretKey)
 		if err != nil {
 			boom.BadRequest(w, err.Error())
 			return
 		}
-
-		fmt.Println("decoded", decoded)
 
 		ctx := context.WithValue(r.Context(), Header, decoded)
 		next.ServeHTTP(w, r.WithContext(ctx))
