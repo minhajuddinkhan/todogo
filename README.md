@@ -29,8 +29,29 @@ GLOBAL OPTIONS:
 ```
 
 ### Initialize Database
-  `todogo db`
-  
+
+Migrates and seed the database
+
+`todogo db` 
+
+
+### Either spin up a server, or just use the cli
+
+###### Server
+
+``` todogo serve ```
+
+###### CLI
+
+``` 
+COMMANDS:
+     todos, todogo todos    Handles Your todos
+     login, todogo login    Starts session from your command line
+     logout, todogo logout  Ends session from your command line
+     serve, todogo serve    Starts serve from your command line
+     db, todogo db          Initiates DB from your command line
+ ```
+
 ### Credentials to get todos and stuff (that are seeded lol)
 ```go
 username: Rameez
