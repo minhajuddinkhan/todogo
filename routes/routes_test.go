@@ -29,7 +29,7 @@ func (r *RouteService) Curl(route string, method string, body interface{}) (*htt
 
 }
 
-func TestAuthRoute(t *testing.T) {
+func TestAuthRouteWithCorrectCreds(t *testing.T) {
 
 	body := LoginRequest{
 		Username: "Rameez",
@@ -53,5 +53,33 @@ func TestAuthRoute(t *testing.T) {
 		t.Errorf(fmt.Sprintf("Test failed: %s", err.Error()))
 
 	}
+
+}
+
+func TestAuthRouteInCorrectCreds(t *testing.T) {
+
+	body := LoginRequest{
+		Username: "Rameez",
+		Password: "1236",
+	}
+
+	_, err := routeService.Curl("/login", "POST", body)
+	if err == nil {
+		t.Errorf(fmt.Sprintf("Test failed: %s", err.Error()))
+		return
+	}
+
+	// decoder := json.NewDecoder(resp.Body)
+	// auth := Authorization{}
+	// err = decoder.Decode(&auth)
+	// if err != nil {
+	// 	t.Errorf(fmt.Sprintf("Test failed: %s", err.Error()))
+
+	// }
+
+	// if len(auth.Authorization) == 0 {
+	// 	t.Errorf(fmt.Sprintf("Test failed: %s", err.Error()))
+
+	// }
 
 }
