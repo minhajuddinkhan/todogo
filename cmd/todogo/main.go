@@ -11,8 +11,6 @@ import (
 	"github.com/minhajuddinkhan/todogo/db"
 
 	"github.com/minhajuddinkhan/todogo/config"
-	"github.com/minhajuddinkhan/todogo/constants"
-	"github.com/minhajuddinkhan/todogo/middlewares"
 	"github.com/minhajuddinkhan/todogo/models"
 	"github.com/minhajuddinkhan/todogo/pgstore"
 	"github.com/minhajuddinkhan/todogo/router"
@@ -68,7 +66,7 @@ func main() {
 
 				//ROUTER
 				R := router.CreateRouter()
-				R.Negroni.UseFunc(middlewares.AuthenticateJWT(constants.UserKey, conf.JWTSecret, constants.Authorization))
+				//				R.Negroni.UseFunc(middlewares.AuthenticateJWT(constants.UserKey, conf.JWTSecret, constants.Authorization))
 
 				routes.RegisterAllRoutes(*R, conf, todoAppStore)
 				R.RegisterHandler()

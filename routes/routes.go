@@ -11,4 +11,5 @@ func RegisterAllRoutes(r router.RouterConf, c *conf.Configuration, store store.S
 
 	RegisterTodoRoutes(r, c, store)
 	RegisterAuthRoutes(r, c, store)
+	RegisterUserRoutes(r, c, store)
 }

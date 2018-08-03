@@ -23,6 +23,7 @@ func NewServer() *Server {
 //Listen Listen on an addr
 func (s *Server) Listen(address string, handler http.Handler) {
 
+	logrus.Info("Server initiating...")
 	s.httpServer = &http.Server{
 		Addr:    address,
 		Handler: handler,

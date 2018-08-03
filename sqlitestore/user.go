@@ -26,8 +26,17 @@ func (pg *SqliteStore) GetUserByNameAndPassword(name string, password string, Us
 	return conn.Where("name = ? AND password = ?", name, password).First(User)
 }
 
+//GetUserByName GetUserByName
 func (pg *SqliteStore) GetUserByName(name string, User *models.User) *gorm.DB {
 	conn := pg.EstablishConnection()
 	defer conn.Close()
 	return conn.Where("name = ?", name).First(User)
+}
+
+//GetAllUsers GetAllUsers
+func (pg *SqliteStore) GetAllUsers(users *[]models.User) *gorm.DB {
+
+	conn := pg.EstablishConnection()
+	defer conn.Close()
+	return conn.Find(users)
 }

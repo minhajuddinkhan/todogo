@@ -22,4 +22,5 @@ type Store interface {
 
 	GetTodos(todos *[]models.Todo) *gorm.DB
 	GetTodoByID(todo *models.Todo, todoID string) *gorm.DB
+	GetAllUsers(users *[]models.User) *gorm.DB
 }
