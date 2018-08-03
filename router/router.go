@@ -8,6 +8,12 @@ import (
 	"github.com/urfave/negroni"
 )
 
+type Route struct {
+	Method  string
+	URI     string
+	Handler http.HandlerFunc
+}
+
 type RouterConf struct {
 	Negroni *negroni.Negroni
 	Router  *mux.Router
@@ -40,7 +46,10 @@ func (n *RouterConf) RegisterHandler() {
 	n.Negroni.UseHandler(n.Router)
 }
 
-func (n *RouterConf) RegisterHandlerFunc(method string, path string, handler http.HandlerFunc) {
+//RegisterMultipleHandlers RegisterMultipleHandlers
+func (n *RouterConf) RegisterMultipleHandlers(routes []Route) {
 
-	n.Router.HandleFunc(path, handler).Methods(method)
+	for _, r := range routes {
+		n.Router.HandleFunc(r.URI, r.Handler).Methods(r.Method)
+	}
 }

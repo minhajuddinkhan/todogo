@@ -26,6 +26,16 @@ type Authorization struct {
 	Authorization string
 }
 
+//AuthRoutes AuthRoutes
+func AuthRoutes(conf *conf.Configuration, store store.Store) []router.Route {
+
+	return []router.Route{
+		{
+			Method: "POST", URI: "/login", Handler: UserLogin(conf, store),
+		},
+	}
+}
+
 //UserLogin UserLogin
 func UserLogin(conf *conf.Configuration, store store.Store) http.HandlerFunc {
 
@@ -66,9 +76,4 @@ func UserLogin(conf *conf.Configuration, store store.Store) http.HandlerFunc {
 
 	}
 
-}
-
-//RegisterAuthRoutes RegisterAuthRoutes
-func RegisterAuthRoutes(R router.RouterConf, conf *conf.Configuration, store store.Store) {
-	R.RegisterHandlerFunc("POST", "/login", UserLogin(conf, store))
 }

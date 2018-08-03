@@ -14,6 +14,18 @@ import (
 	"github.com/minhajuddinkhan/todogo/utils"
 )
 
+//UserRoutes UserRoutes
+func UserRoutes(conf *conf.Configuration, store store.Store) []router.Route {
+	return []router.Route{
+		{
+			Method: "GET", URI: "/users/csv", Handler: GetUserCSV(conf, store),
+		},
+		{
+			Method: "POST", URI: "/users/upload", Handler: UserFileUpload(conf, store),
+		},
+	}
+}
+
 //GetUserCSV GetUserCSV
 func GetUserCSV(conf *conf.Configuration, store store.Store) http.HandlerFunc {
 
@@ -68,10 +80,4 @@ func UserFileUpload(conf *conf.Configuration, store store.Store) http.HandlerFun
 		//		utils.Respond(w, "File upload done!")
 
 	}
-}
-
-//RegisterUserRoutes RegisterUserRoutes
-func RegisterUserRoutes(R router.RouterConf, conf *conf.Configuration, store store.Store) {
-	R.RegisterHandlerFunc("POST", "/users/csv", GetUserCSV(conf, store))
-	R.RegisterHandlerFunc("POST", "/users/upload", UserFileUpload(conf, store))
 }

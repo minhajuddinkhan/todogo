@@ -9,7 +9,7 @@ import (
 //RegisterAllRoutes RegisterAllRoutes
 func RegisterAllRoutes(r router.RouterConf, c *conf.Configuration, store store.Store) {
 
-	RegisterTodoRoutes(r, c, store)
-	RegisterAuthRoutes(r, c, store)
-	RegisterUserRoutes(r, c, store)
+	r.RegisterMultipleHandlers(TodoRoutes(c, store))
+	r.RegisterMultipleHandlers(AuthRoutes(c, store))
+	r.RegisterMultipleHandlers(UserRoutes(c, store))
 }

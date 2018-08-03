@@ -16,6 +16,19 @@ import (
 	"github.com/minhajuddinkhan/todogo/utils"
 )
 
+//TodoRoutes TodoRoutes
+func TodoRoutes(c *conf.Configuration, store store.Store) []router.Route {
+
+	return []router.Route{
+		{
+			Method: "GET", URI: "/todos", Handler: GetTodos(c, store),
+		},
+		{
+			Method: "GET", URI: "/todos/{id}", Handler: GetTodoByID(c, store),
+		},
+	}
+}
+
 //GetTodos GetTodos
 func GetTodos(c *conf.Configuration, store store.Store) http.HandlerFunc {
 
@@ -58,11 +71,4 @@ func GetTodoByID(c *conf.Configuration, store store.Store) http.HandlerFunc {
 		utils.Respond(w, todo)
 
 	}
-}
-
-//RegisterTodoRoutes RegisterTodoRoutes
-func RegisterTodoRoutes(r router.RouterConf, c *conf.Configuration, store store.Store) {
-
-	r.RegisterHandlerFunc("GET", "/todos", GetTodos(c, store))
-	r.RegisterHandlerFunc("GET", "/todos/{id}", GetTodoByID(c, store))
 }
