@@ -24,7 +24,7 @@ func AuthenticateJWT(keyForDecodedDataAccess int, SecretKey string, Header strin
 			return
 		}
 
-		decoded, err := jwt.DecodeJWT(Header, SecretKey)
+		decoded, err := jwt.DecodeJWT(headers, SecretKey)
 		if err != nil {
 			boom.BadRequest(w, err.Error())
 			return

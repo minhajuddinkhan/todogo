@@ -2,6 +2,7 @@ package routes
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/darahayes/go-boom"
@@ -39,7 +40,38 @@ func GetUserCSV(conf *conf.Configuration, store store.Store) http.HandlerFunc {
 	}
 }
 
+//UserFileUpload UserFileUpload
+func UserFileUpload(conf *conf.Configuration, store store.Store) http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		file, handler, err := r.FormFile("uploadfile")
+		if err != nil {
+			boom.BadRequest(w, err.Error())
+			return
+		}
+
+		if err != nil {
+			boom.BadRequest(w, "not found whatever "+err.Error())
+		}
+		err = utils.FileUpload(file, handler.Filename, "./userfiles")
+		if err != nil {
+			boom.Conflict(w, err.Error())
+		}
+
+		b, err := ioutil.ReadFile("./userfiles/" + handler.Filename)
+		if err != nil {
+			boom.BadData(w, "cannot read the saved file:"+err.Error())
+			return
+		}
+		w.Write(b)
+		//		utils.Respond(w, "File upload done!")
+
+	}
+}
+
 //RegisterUserRoutes RegisterUserRoutes
 func RegisterUserRoutes(R router.RouterConf, conf *conf.Configuration, store store.Store) {
 	R.RegisterHandlerFunc("POST", "/users/csv", GetUserCSV(conf, store))
+	R.RegisterHandlerFunc("POST", "/users/upload", UserFileUpload(conf, store))
 }

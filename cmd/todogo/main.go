@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -66,8 +67,7 @@ func main() {
 
 				//ROUTER
 				R := router.CreateRouter()
-				//				R.Negroni.UseFunc(middlewares.AuthenticateJWT(constants.UserKey, conf.JWTSecret, constants.Authorization))
-
+				R.Router.PathPrefix("/userfiles/").Handler(http.StripPrefix("/userfiles/", http.FileServer(http.Dir("./userfiles/"))))
 				routes.RegisterAllRoutes(*R, conf, todoAppStore)
 				R.RegisterHandler()
 				todoAppSvr.Listen(":"+conf.Port, R.Negroni)
