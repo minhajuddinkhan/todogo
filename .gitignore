@@ -1,4 +1,8 @@
 .env
 vendor
+<<<<<<< HEAD
 csvs/*
 userfiles/*
+=======
+csvs/*
+>>>>>>> 4b03af8d62bc64acfd820705c4ce351da63d131c
