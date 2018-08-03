@@ -63,23 +63,9 @@ func TestAuthRouteInCorrectCreds(t *testing.T) {
 		Password: "1236",
 	}
 
-	_, err := routeService.Curl("/login", "POST", body)
-	if err == nil {
+	resp, err := routeService.Curl("/login", "POST", body)
+	if resp.StatusCode != 404 {
 		t.Errorf(fmt.Sprintf("Test failed: %s", err.Error()))
-		return
+
 	}
-
-	// decoder := json.NewDecoder(resp.Body)
-	// auth := Authorization{}
-	// err = decoder.Decode(&auth)
-	// if err != nil {
-	// 	t.Errorf(fmt.Sprintf("Test failed: %s", err.Error()))
-
-	// }
-
-	// if len(auth.Authorization) == 0 {
-	// 	t.Errorf(fmt.Sprintf("Test failed: %s", err.Error()))
-
-	// }
-
 }
