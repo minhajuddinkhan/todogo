@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/minhajuddinkhan/todogo/constants"
+	"github.com/minhajuddinkhan/todogo/middlewares"
 	"github.com/minhajuddinkhan/todogo/store"
 
 	"github.com/minhajuddinkhan/todogo/commands"
@@ -66,8 +68,7 @@ func main() {
 
 				//ROUTER
 				R := router.CreateRouter()
-				//				R.Negroni.UseFunc(middlewares.AuthenticateJWT(constants.UserKey, conf.JWTSecret, constants.Authorization))
-
+				R.Negroni.UseFunc(middlewares.AuthenticateJWT(constants.UserKey, conf.JWTSecret, constants.Authorization))
 				routes.RegisterAllRoutes(*R, conf, todoAppStore)
 				R.RegisterHandler()
 				todoAppSvr.Listen(":"+conf.Port, R.Negroni)

@@ -15,6 +15,8 @@ func EncodeJWT(name string, JWTSecret string) (string, error) {
 		"exp":  time.Now().Add(time.Minute * 20).Unix(),
 	})
 
+	s, _ := signer.SignedString([]byte(JWTSecret))
+	fmt.Println(s)
 	return signer.SignedString([]byte(JWTSecret))
 }
 
