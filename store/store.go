@@ -19,6 +19,7 @@ type Store interface {
 	GetUser(User *models.User) *gorm.DB
 	GetUserByNameAndPassword(name string, password string, User *models.User) *gorm.DB
 	GetUserByName(name string, User *models.User) *gorm.DB
+	CreateUser(user *models.User) *gorm.DB
 
 	GetTodos(todos *[]models.Todo) *gorm.DB
 	GetTodoByID(todo *models.Todo, todoID string) *gorm.DB

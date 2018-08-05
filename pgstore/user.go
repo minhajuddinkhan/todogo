@@ -41,4 +41,11 @@ func (pg *PgStore) GetAllUsers(users *[]models.User) *gorm.DB {
 	return conn.Find(users)
 }
 
+//CreateUser CreateUser
+func (pg *PgStore) CreateUser(user *models.User) *gorm.DB {
 
+	conn := pg.EstablishConnection()
+	defer conn.Close()
+	return conn.Create(user)
+
+}

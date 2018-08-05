@@ -60,6 +60,7 @@ func main() {
 		*commands.Todos(todoAppStore),
 		*commands.Login(todoAppStore),
 		*commands.Logout(todoAppStore),
+		*commands.SignUp(todoAppStore),
 		{
 			Name:    "serve",
 			Aliases: []string{"todogo serve"},

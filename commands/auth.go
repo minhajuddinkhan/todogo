@@ -97,3 +97,54 @@ func Logout(store store.Store) *cli.Command {
 		},
 	}
 }
+
+//SignUp SignUp
+func SignUp(store store.Store) *cli.Command {
+
+	return &cli.Command{
+		Name:    "signup",
+		Aliases: []string{"todogo signup"},
+		Usage:   "Signup a new user",
+		Action: func(c *cli.Context) error {
+
+			user := models.User{}
+			console := color.New(color.FgHiYellow)
+
+			isInvalidName := true
+			isInvalidPassword := true
+
+			for isInvalidName {
+				console.Println("Enter Name")
+				fmt.Scanln(&user.Name)
+				if len(user.Name) > 0 {
+					isInvalidName = false
+				} else {
+					logrus.Error("Can't set empty name")
+				}
+
+			}
+
+			for isInvalidPassword {
+				console.Println("Enter Password")
+				fmt.Scanln(&user.Password)
+				if len(user.Password) > 0 {
+					isInvalidPassword = false
+				} else {
+					logrus.Error("Can't set empty Password")
+
+				}
+			}
+
+			console.Println("Enter Address")
+			fmt.Scanln(&user.Address)
+
+			result := store.CreateUser(&user)
+			if result.RowsAffected == 0 {
+				logrus.Error("Coudn't create user" + result.Error.Error())
+			}
+
+			logrus.Info("User Created!")
+			return nil
+		},
+	}
+}

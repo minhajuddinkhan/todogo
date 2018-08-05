@@ -40,3 +40,11 @@ func (pg *SqliteStore) GetAllUsers(users *[]models.User) *gorm.DB {
 	defer conn.Close()
 	return conn.Find(users)
 }
+
+func (pg *SqliteStore) CreateUser(user *models.User) *gorm.DB {
+
+	conn := pg.EstablishConnection()
+	defer conn.Close()
+	return conn.Create(user)
+
+}
