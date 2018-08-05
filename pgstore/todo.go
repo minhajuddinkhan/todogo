@@ -21,3 +21,19 @@ func (pg *PgStore) GetTodoByID(todo *models.Todo, todoID string) *gorm.DB {
 	return conn.First(todo, todoID)
 
 }
+
+//CreateTodo CreateTodo
+func (pg *PgStore) CreateTodo(todo *models.Todo) *gorm.DB {
+	conn := pg.EstablishConnection()
+	defer conn.Close()
+
+	return conn.Create(todo)
+}
+
+//UpdateTodo UpdateTodo
+func (pg *PgStore) UpdateTodo(todo *models.Todo) *gorm.DB {
+
+	conn := pg.EstablishConnection()
+	defer conn.Close()
+	return conn.Save(todo)
+}

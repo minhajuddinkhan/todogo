@@ -40,3 +40,5 @@ func (pg *PgStore) GetAllUsers(users *[]models.User) *gorm.DB {
 	defer conn.Close()
 	return conn.Find(users)
 }
+
+

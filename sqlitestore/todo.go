@@ -21,3 +21,16 @@ func (pg *SqliteStore) GetTodoByID(todo *models.Todo, todoID string) *gorm.DB {
 	return conn.First(todo, todoID)
 
 }
+func (pg *SqliteStore) CreateTodo(todo *models.Todo) *gorm.DB {
+	conn := pg.EstablishConnection()
+	defer conn.Close()
+
+	return conn.Create(todo)
+}
+
+func (pg *SqliteStore) UpdateTodo(todo *models.Todo) *gorm.DB {
+
+	conn := pg.EstablishConnection()
+	defer conn.Close()
+	return conn.Save(todo)
+}
