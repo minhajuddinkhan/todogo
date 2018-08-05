@@ -43,7 +43,7 @@ func Login(store store.Store) *cli.Command {
 					return nil
 				}
 				rc.Println("Something bad happened\n" + err.Error())
-				return err
+				return nil
 			}
 
 			windowID := (os.Getenv("WINDOWID"))
@@ -60,8 +60,8 @@ func Login(store store.Store) *cli.Command {
 
 				if err != nil {
 					rc.Println("Something bad happened\n" + err.Error())
+					return nil
 				}
-				return err
 			}
 			err = store.UpdateSession(&models.Session{
 				Session: windowID,
@@ -71,7 +71,7 @@ func Login(store store.Store) *cli.Command {
 			if err != nil {
 				rc.Println("Something bad happened\n" + err.Error())
 			}
-			c.Println("Login successfull!")
+			logrus.Info("Login successfull!")
 			return nil
 		},
 	}

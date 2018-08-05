@@ -80,8 +80,9 @@ func updateTodo(store store.Store) *cli.Command {
 					return nil
 				}
 			}
+			logrus.Warn("\nSpaces aren't supported. :)\n")
 			fmt.Println("Enter Todo Name")
-			fmt.Scan(&todo.Name)
+			fmt.Scanln(&todo.Name)
 
 			fmt.Println("Enter Todo Priority")
 			fmt.Scan(&todo.Priorty)
@@ -91,6 +92,8 @@ func updateTodo(store store.Store) *cli.Command {
 			if result.RowsAffected == 0 {
 				fmt.Println("No Todos were updated.")
 			}
+
+			logrus.Info("\n Todo Updated!\n")
 			return nil
 		},
 	}
@@ -167,6 +170,8 @@ func createTodo(store store.Store) *cli.Command {
 			if result.RowsAffected == 0 {
 				logrus.Error("Something went wrong", result.Error.Error())
 			}
+			logrus.Info("\n Todo Created!\n")
+
 			return nil
 		},
 	}
