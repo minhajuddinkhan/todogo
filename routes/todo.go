@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/darahayes/go-boom"
@@ -26,6 +28,9 @@ func TodoRoutes(c *conf.Configuration, store store.Store) []router.Route {
 		{
 			Method: "GET", URI: "/todos/{id}", Handler: GetTodoByID(c, store),
 		},
+		{
+			Method: "POST", URI: "/todos", Handler: CreateTodo(c, store),
+		},
 	}
 }
 
@@ -41,6 +46,7 @@ func GetTodos(c *conf.Configuration, store store.Store) http.HandlerFunc {
 				boom.NotFound(w, "Todos Not Found")
 				return
 			}
+
 			boom.Internal(w, "Something went wrong")
 			return
 		}
@@ -66,8 +72,34 @@ func GetTodoByID(c *conf.Configuration, store store.Store) http.HandlerFunc {
 				return
 			}
 			boom.Internal(w, err)
+			return
 		}
 
+		utils.Respond(w, todo)
+
+	}
+}
+
+func CreateTodo(c *conf.Configuration, store store.Store) http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		b, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			boom.Internal(w, err)
+			return
+		}
+
+		var todo models.Todo
+		if err := json.Unmarshal(b, &todo); err != nil {
+			boom.BadRequest(w, err.Error())
+			return
+		}
+
+		if err := store.CreateTodo(&todo).Error; err != nil {
+			boom.BadRequest(w, err)
+			return
+		}
 		utils.Respond(w, todo)
 
 	}

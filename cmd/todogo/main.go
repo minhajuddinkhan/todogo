@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/minhajuddinkhan/todogo/constants"
 	"github.com/minhajuddinkhan/todogo/middlewares"
 	"github.com/minhajuddinkhan/todogo/store"
@@ -24,7 +23,7 @@ import (
 )
 
 func main() {
-	godotenv.Load()
+
 	todoApp := cli.NewApp()
 	todoApp.Name = "TODOGO - just a dummy todo application. nothing fancy"
 

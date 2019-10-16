@@ -6,8 +6,8 @@ import (
 
 type Todo struct {
 	gorm.Model
-	Name    string `gorm:"type:varchar(100)`
-	Priorty int
-	User    User `gorm:"foreignkey:UserID"`
-	UserID  uint
+	Name    string `gorm:"type:varchar(100)" json:"name,omitempty"`
+	Priorty int    `json:"priority,omitempty"`
+	User    User   `gorm:"foreignkey:UserID"`
+	UserID  uint   `json:"userId,omitempty"`
 }
